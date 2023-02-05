@@ -1,0 +1,21 @@
+#
+## Alias OBJ Material File
+# Exported from SketchUp, (c) 2000-2012 Trimble Navigation Limited
+
+newmtl GreenHakey_001
+Ka 0.000000 0.000000 0.000000
+Kd 0.305882 0.427451 0.211765
+Ks 0.330000 0.330000 0.330000
+map_Kd Tank_T-90_truck_segment/GreenHakey_001.jpg
+
+newmtl Segment
+Ka 0.000000 0.000000 0.000000
+Kd 0.168627 0.168627 0.168627
+Ks 0.330000 0.330000 0.330000
+map_Kd Tank_T-90_truck_segment/Segment.jpg
+
+newmtl ForegroundColor
+Ka 0.000000 0.000000 0.000000
+Kd 0.000000 0.000000 0.000000
+Ks 0.330000 0.330000 0.330000
+

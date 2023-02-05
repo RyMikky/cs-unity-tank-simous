@@ -1,0 +1,15 @@
+#
+## Alias OBJ Material File
+# Exported from SketchUp, (c) 2000-2012 Trimble Navigation Limited
+
+newmtl Segment
+Ka 0.000000 0.000000 0.000000
+Kd 0.168627 0.168627 0.168627
+Ks 0.330000 0.330000 0.330000
+map_Kd TailSegment.02/Segment.jpg
+
+newmtl ForegroundColor
+Ka 0.000000 0.000000 0.000000
+Kd 0.000000 0.000000 0.000000
+Ks 0.330000 0.330000 0.330000
+

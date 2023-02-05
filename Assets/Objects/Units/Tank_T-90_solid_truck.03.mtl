@@ -1,0 +1,21 @@
+#
+## Alias OBJ Material File
+# Exported from SketchUp, (c) 2000-2012 Trimble Navigation Limited
+
+newmtl Track_Top_02
+Ka 0.000000 0.000000 0.000000
+Kd 0.109804 0.098039 0.094118
+Ks 0.330000 0.330000 0.330000
+map_Kd Tank_T-90_solid_truck.03/Track_Top_02.png
+
+newmtl Track_Bottom_02
+Ka 0.000000 0.000000 0.000000
+Kd 0.164706 0.141176 0.129412
+Ks 0.330000 0.330000 0.330000
+map_Kd Tank_T-90_solid_truck.03/Track_Bottom_02.png
+
+newmtl ForegroundColor
+Ka 0.000000 0.000000 0.000000
+Kd 0.000000 0.000000 0.000000
+Ks 0.330000 0.330000 0.330000
+
