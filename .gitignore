@@ -468,3 +468,4 @@ FodyWeavers.xsd
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,unity
 /Assets/_anotherDonwload
+/Assets/Textures/Terrain/terrains.psd
