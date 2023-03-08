@@ -14,55 +14,76 @@ public class TankTruckMovingSystem : MonoBehaviour
     public InputType _inputType = InputType.Player;
 
     [Tooltip("Флаг включения скрипта")]
-    public bool _Enable = false;                      // включение скрипта
+    public bool _Enable = false;                                       // включение скрипта
 
     [Header("Блок наполнения коллайдерами и трансформами")]
     [Tooltip("Коллайдеры ведущих колес левого борта")]
-    public WheelCollider[] _leftWheelsColliders;      // коллайдеры ведущих колес левого борта
+    public WheelCollider[] _leftWheelsColliders;                       // коллайдеры ведущих колес левого борта
     [Tooltip("Коллайдеры ведущих колес правого борта")]
-    public WheelCollider[] _rightWheelsColliders;     // коллайдеры ведущих колес правого борта
+    public WheelCollider[] _rightWheelsColliders;                      // коллайдеры ведущих колес правого борта
 
     [Tooltip("Трансформы ведущих колес левого борта")]
-    public Transform[] _leftWheelsTransforms;         // трансформы ведущих колес левого борта
+    public Transform[] _leftWheelsTransforms;                          // трансформы ведущих колес левого борта
     [Tooltip("Трансформы ведущих колес правого борта")]
-    public Transform[] _rightWheelsTransforms;        // трансформы ведущих колес правого борта
+    public Transform[] _rightWheelsTransforms;                         // трансформы ведущих колес правого борта
 
     [Tooltip("Трансформы зависимых колес левого борта")]
-    public Transform[] _leftDependenceWheelsTransforms;         // трансформы зависимых колес левого борта
+    public Transform[] _leftDependenceWheelsTransforms;                // трансформы зависимых колес левого борта
     [Tooltip("Трансформы зависимых колес правого борта")]
-    public Transform[] _rightDependenceWheelsTransforms;        // трансформы зависимых колес правого борта
+    public Transform[] _rightDependenceWheelsTransforms;               // трансформы зависимых колес правого борта
 
-    public Transform _testTruckBone;
+    [Tooltip("Трансформы костей гусеницы левого борта")]
+    public Transform[] _leftTruckBones;                                // трансформы костей левого борта
+    [Tooltip("Трансформы костей гусеницы правого борта")]
+    public Transform[] _rightTruckBones;                               // трансформы костей правого борта
 
-    [Header("Силовые характеристики движетеля")]
+    [Tooltip("Базовый объект левой гусеницы")]
+    public GameObject _leftTankTruck;                                  // базовый объект левой гусеницы
+    [Tooltip("Базовый объект правой гусеницы")]
+    public GameObject _rightTankTruck;                                 // базовый объект правой гусеницы
+
+    [Header("Силовые характеристики двигателя и тормозов")]
     [Tooltip("Мощность двигателя")]
-    public float _engineForce = 1800f;                // мощность двигателя
+    public float _engineForce = 3400f;                // мощность двигателя
     public void SetEngineForce(float force) { _engineForce = force; }
     public float GetEngineForce() { return _engineForce; }
     [Tooltip("Мощность торможения")]
-    public float _brakeForce = 2400f;                 // сила торможения
+    public float _brakeForce = 5200f;                 // сила торможения
     public void SetBreakForce(float force) { _brakeForce = force; }
     public float GetBreakForce() { return _brakeForce; }
 
     [Header("Настройки максимальной скорости и бокового сольжения")]
     [Tooltip("Базовый множитель бокового сольжения гусениц")]
-    public float _defaultSideFriction = 0.5f;         // базовый множитель бокового сольжения гусениц
+    public float _defaultSideFriction = 1f;           // базовый множитель бокового сольжения гусениц
     [Tooltip("Множитель бокового сольжения гусениц комплексного перемещения")]
-    public float _completeMoveSideFriction = 0.3f;    // множитель бокового сольжения гусениц комплексного перемещения
-    
+    public float _completeMoveSideFriction = 0.6f;    // множитель бокового сольжения гусениц комплексного перемещения
+
     [Tooltip("Максимальная скорость движения")]
-    public float _directMoveVelocityLimit = 6f;       // максимальная скорость движения
+    public float _directMoveVelocityLimit = 10f;      // максимальная скорость движения
     public void SetDirectVelocityLimit(float limit) { _directMoveVelocityLimit = limit; }
     public float GetDirectVelocityLimit() { return _directMoveVelocityLimit; }
     [Tooltip("Множитель бокового скольжения при движении прямо")]
-    public float _directMoveSideFriction = 0.5f;      // множитель бокового скольжения при движении прямо
+    public float _directMoveSideFriction = 0.9f;      // множитель бокового скольжения при движении прямо
 
     [Tooltip("Максимальная скорость вращения на месте")]
     public float _rotateOnStandVelocityLimit = 1f;    // максимальная скорость вращения на месте
     public void SetRotateVelocityLimit(float limit) { _rotateOnStandVelocityLimit = limit; }
     public float GetRotateVelocityLimit() { return _rotateOnStandVelocityLimit; }
     [Tooltip("Множитель бокового скольжения при развороте на месте")]
-    public float _rotateOnStandSideFriction = 0.06f;  // множитель бокового скольжения при развороте на месте
+    public float _rotateOnStandSideFriction = 0.2f;   // множитель бокового скольжения при развороте на месте
+
+    [Header("Настройки масс элементов танка и подвески")]
+    [Tooltip("Активация заданных ниже параметров при начале симуляции")]
+    public bool _useCustomData = false;               // активация заданных ниже параметров при начале симуляции
+    [Tooltip("Общая масса танка в килограммах (базовый Rigidbody)")]
+    public float _unitCustomMass = 50000f;            // общая масса танка в килограммах (базовый Rigidbody)
+    [Space]
+    [Tooltip("Сила воздействия пружины в Ньютонах. Для танка оптимально в 10 раз больше массы")]
+    public float _wheelCustomSpring = 500000f;            // сила воздействия пружины в Ньютонах. Для танка оптимально в 10 раз больше массы
+    [Tooltip("Демпфирующее сопротивление в Ньютонах. Для танка оптимально равное массе")]
+    public float _wheelCustomDamper = 50000f;             // демпфирующее сопротивление в Ньютонах. Для танка оптимально равное массе
+    [Tooltip("Высота подъема подвески в метрах. Для танка равна высоте трака гусеницы")]
+    public float _wheelCustomTarget = 1f;               // высота подъема подвески в метрах. Для танка равна высоте трака гусеницы
 
     [Header("Погрешности положения осей джойстика")]
     [Tooltip("Погрешность отклонения джойстика по вертикали")]
@@ -70,7 +91,7 @@ public class TankTruckMovingSystem : MonoBehaviour
     private float _defDeltaVertical;                  // погрешность отклонения джойстика по вертикали
     public void SetDeltaVertical(float deltaV) { _deltaVertical = deltaV; }
     public float GetDeltaVertical() { return _deltaVertical; }
-    public void SetDeltaVerticalDefault() { _deltaVertical = _defDeltaVertical;  }
+    public void SetDeltaVerticalDefault() { _deltaVertical = _defDeltaVertical; }
     [Tooltip("Погрешность отклонения джойстика по горизонтали")]
     public float _deltaHorizontal = 0.02f;            // погрешность отклонения джойстика по горизонтали
     private float _defDeltaHorizontal = 0.02f;        // погрешность отклонения джойстика по горизонтали
@@ -85,48 +106,52 @@ public class TankTruckMovingSystem : MonoBehaviour
     private float _currentSpeed;                      // значение текущей скорости
     private float _angularSpeed;                      // значение скорости вращения вокруг оси Y
 
-    private Transform _leftReferenceWheelTransform;   // базовая ссылка на вращение левого борта
-    private Transform _rightReferenceWheelTransform;  // базовая ссылка на вращение левого борта
+    private Quaternion _leftCalculateRotation;        // вращение для всех колес левого борта
+    private Quaternion _rightCalculateRotation;       // вращение для всех колес правого борта
     private Rigidbody _currentBody;                   // тело над которым работает скрипт
     private float _suspentionDistance;                // высота подвески
 
+    private float _leftTrackTextureOffset = 0.0f;     // оффсет текстуры левого трака
+    private float _rightTrackTextureOffset = 0.0f;    // оффсет текстуры правого трака
+
+
     [Header("Блок дебаговых переменных")]
     [Tooltip("Показатель текущей скорости")]
-    public float DEBUGCURRENTVELOCITY;
-    public float GetDebugCurrentVelocity() { return DEBUGCURRENTVELOCITY; }
+    public float VELOCITY;
+    public float GetDebugCurrentVelocity() { return VELOCITY; }
     [Tooltip("Показатель текущей скорости разворота по оси Y")]
-    public float DEBUGCURRENTAXISYVELOCITY;
-    public float GetDebugCurrentAxisVelocity() { return DEBUGCURRENTAXISYVELOCITY; }
+    public float AXIS_VELOCITY;
+    public float GetDebugCurrentAxisVelocity() { return AXIS_VELOCITY; }
     [Tooltip("Показатель текущей угловой cкорости")]
-    public float DEBUGCURRENTANGULARVELOCITY;
+    public float ANGULAR_VELOCITY;
     [Tooltip("Множитель входящего ускорения по вертикальной оси")]
-    public float DEBUGFORWARDACCEL;
-    public float GetDebugCurrentForwardAcceleration() { return DEBUGFORWARDACCEL; }
+    public float FORWARD_ACCEL;
+    public float GetDebugCurrentForwardAcceleration() { return FORWARD_ACCEL; }
     [Tooltip("Множитель входящего ускорения по горизонтальной оси")]
-    public float DEBUGROTATIONACCEL;
-    public float GetDebugCurrentRotationAcceleration() { return DEBUGROTATIONACCEL; }
+    public float ROTATION_ACCEL;
+    public float GetDebugCurrentRotationAcceleration() { return ROTATION_ACCEL; }
     [Tooltip("Множитель текущего тормозного усилия")]
-    public float DEBUGBREAKACCEL;
-    public float GetDebugCurrentBreakAcceleration() { return DEBUGBREAKACCEL; }
+    public float BREAK_ACCEL;
+    public float GetDebugCurrentBreakAcceleration() { return BREAK_ACCEL; }
 
     [Tooltip("Величина текущего вращательного момента на левом колесе")]
-    public float DEBUGLEFTTORQUE;
-    public float GetDebugLeftWheelTorque() { return DEBUGLEFTTORQUE; }
+    public float LEFT_TORQUE;
+    public float GetDebugLeftWheelTorque() { return LEFT_TORQUE; }
     [Tooltip("Величина текущего вращательного момента на правом колесе")]
-    public float DEBUGRIGHTTORQUE;
-    public float GetDebugRightWheelTorque() { return DEBUGRIGHTTORQUE; }
+    public float RIGHT_TORQUE;
+    public float GetDebugRightWheelTorque() { return RIGHT_TORQUE; }
     [Tooltip("Величина текущего тормозящего момента момента на левом колесе")]
-    public float DEBUGLEFTBREAKTORQUE;
-    public float GetDebugLeftBreakForce() { return DEBUGLEFTBREAKTORQUE; }
+    public float LEFT_BREAK_TORQUE;
+    public float GetDebugLeftBreakForce() { return LEFT_BREAK_TORQUE; }
     [Tooltip("Величина текущего тормозящего момента момента на правом колесе")]
-    public float DEBUGRIGHTBREAKTORQUE;
-    public float GetDebugRightBreakForce() { return DEBUGRIGHTBREAKTORQUE; }
+    public float RIGHT_BREAK_TORQUE;
+    public float GetDebugRightBreakForce() { return RIGHT_BREAK_TORQUE; }
     [Tooltip("Величина текущего множителя бокового сольжения на левом колесе")]
-    public float DEBUGSIDEWAYSTIFFNESS;
+    public float SIDEWAY_STIFFNESS;
 
     private enum MovingType
     {
-        direct, on_stand, complette, autobreak
+        direct, on_stand, complette, autobreak, out_of_hit
     }
 
     public void SetInputType(InputType type) { _inputType = type; }
@@ -143,56 +168,97 @@ public class TankTruckMovingSystem : MonoBehaviour
 
     private void Awake()
     {
+        // запись текущего рижитбади
         _currentBody = GetComponent<Rigidbody>();
+
+        // запоминаем изначально заданные погрешности отклонения джойстика
+        _defDeltaVertical = _deltaVertical;
+        _defDeltaHorizontal = _deltaHorizontal;
+
+        UpdateCustomData();                        // записываем заданные кастомные параметры объекта
 
         if (_leftWheelsTransforms.Length != 0)
         {
-            _leftReferenceWheelTransform = _leftWheelsTransforms[0];
-            _suspentionDistance = _leftWheelsColliders[0].suspensionDistance;
+            // если есть колеса, то присваеваем основному общему вращению левого борта стартовый поворот среднего колеса
+            _leftCalculateRotation = _leftWheelsTransforms[_leftWheelsTransforms.Length / 2].localRotation;
         }
 
         if (_rightWheelsTransforms.Length != 0)
         {
-            _rightReferenceWheelTransform = _rightWheelsTransforms[0];
+            // если есть колеса, то присваеваем основному общему вращению правого борта стартовый поворот среднего колеса
+            _rightCalculateRotation = _rightWheelsTransforms[_rightWheelsTransforms.Length / 2].localRotation;
         }
-        
-        // запоминаем изначально заданные погрешности отклонения джойстика
-        _defDeltaVertical = _deltaVertical;
-        _defDeltaHorizontal = _deltaHorizontal;
     }
 
     void FixedUpdate()
     {
-        UpdateCurrentSpeed();                      // записываем показатели текущей скорости
-        UpdateInputsData();                        // записываем информацию по положению осей джойстика
+        if (_Enable)
+        {
+            UpdateCurrentSpeed();                      // записываем показатели текущей скорости
+            UpdateInputsData();                        // записываем информацию по положению осей джойстика
 
-        CompletteDrive();                          // комплексная функция движения
+            CompletteDrive();                          // комплексная функция движения
 
-        UpdateDebugData();                         // обновления дебаговых переменных
-        UpdateWheelTransforms();                   // обновляем положения колёс
-        UpdateTruckBonesTransforms();              // обновление положеие костей меша гусениц
+            UpdateDebugData();                         // обновления дебаговых переменных
+            UpdateWheelTransforms();                   // обновляем положения колёс
+        }
     }
 
+    // ----------------------------------------------- блок основных апдейтов по ходу действия скрипта ------------------------------
+
+    // обновление кастомных параметров объекта
+    void UpdateCustomData()
+    {
+        if (_useCustomData)
+        {
+            // если есть физическое тело, то присваиваем ему данные из поля массы
+            if (_currentBody != null) _currentBody.mass = _unitCustomMass;
+
+            if (_leftWheelsColliders.Length != 0)
+            {
+                // если есть коллайдеры колес, то обновляем подвеску в них
+                for (int i = 0; i != _leftWheelsColliders.Length; ++i)
+                {
+                    JointSpring sp = _leftWheelsColliders[i].suspensionSpring;
+                    sp.spring = _wheelCustomSpring;
+                    sp.damper = _wheelCustomDamper;
+                    sp.targetPosition = _wheelCustomTarget;
+
+                    _leftWheelsColliders[i].suspensionSpring = sp;
+                }
+            }
+
+            if (_rightWheelsColliders.Length != 0)
+            {
+                // если есть коллайдеры колес, то обновляем подвеску в них
+                for (int i = 0; i != _rightWheelsColliders.Length; ++i)
+                {
+                    JointSpring sp = _rightWheelsColliders[i].suspensionSpring;
+                    sp.spring = _wheelCustomSpring;
+                    sp.damper = _wheelCustomDamper;
+                    sp.targetPosition = _wheelCustomTarget;
+
+                    _rightWheelsColliders[i].suspensionSpring = sp;
+                }
+            }
+        }
+    }
+    // обновление дебаговых данных
     void UpdateDebugData()
     {
+        VELOCITY = _currentSpeed;
+        AXIS_VELOCITY = _angularSpeed;
 
-        DEBUGCURRENTVELOCITY = _currentSpeed;
-        DEBUGCURRENTAXISYVELOCITY = _angularSpeed;
-        
-        //DEBUGCURRENTANGULARVELOCITY = _angularSpeed.magnitude;
-        DEBUGCURRENTANGULARVELOCITY = _angularSpeed;
+        FORWARD_ACCEL = _forwardAcceleration;
+        ROTATION_ACCEL = _rotateAcceleration;
+        BREAK_ACCEL = _breakPowerScaler;
 
-        DEBUGFORWARDACCEL = _forwardAcceleration;
-        DEBUGROTATIONACCEL = _rotateAcceleration;
-        DEBUGBREAKACCEL = _breakPowerScaler;
-
-        DEBUGLEFTTORQUE = _leftWheelsColliders[2].motorTorque;
-        DEBUGRIGHTTORQUE = _rightWheelsColliders[2].motorTorque;
-        DEBUGLEFTBREAKTORQUE = _leftWheelsColliders[2].brakeTorque;
-        DEBUGRIGHTBREAKTORQUE = _rightWheelsColliders[2].brakeTorque;
-        DEBUGSIDEWAYSTIFFNESS = _leftWheelsColliders[2].sidewaysFriction.stiffness;
+        LEFT_TORQUE = _leftWheelsColliders[2].motorTorque;
+        RIGHT_TORQUE = _rightWheelsColliders[2].motorTorque;
+        LEFT_BREAK_TORQUE = _leftWheelsColliders[2].brakeTorque;
+        RIGHT_BREAK_TORQUE = _rightWheelsColliders[2].brakeTorque;
+        SIDEWAY_STIFFNESS = _leftWheelsColliders[2].sidewaysFriction.stiffness;
     }
-
     // получение данных по горизонтали и вертикали со стрелок
     void UpdateInputsData()
     {
@@ -206,70 +272,33 @@ public class TankTruckMovingSystem : MonoBehaviour
                 break;
         }
     }
-
+    // получение данных по текущей прямолинейной и угловой скоростям
     void UpdateCurrentSpeed()
     {
         _angularSpeed = _currentBody.angularVelocity.magnitude;           // обновляем угловую скорость
-        _currentSpeed = _currentBody.velocity.magnitude;        // обновляем обычную скорость
+        _currentSpeed = _currentBody.velocity.magnitude;                  // обновляем обычную скорость
     }
-
+    // вызов обновления положения колес танка
     void UpdateWheelTransforms()
     {
-        UpdateWheelTransform(ref _leftWheelsColliders, ref _leftWheelsTransforms);
-        UpdateWheelTransform(ref _rightWheelsColliders, ref _rightWheelsTransforms);
+        // комплексная функция обновления возвышения колес и костей гусеницы, а также расчёта ссылок на вращение
+        UpdateWheelTransform(ref _leftTrackTextureOffset, ref _leftCalculateRotation, ref _leftWheelsColliders, ref _leftWheelsTransforms, ref _leftTruckBones);
+        UpdateWheelTransform(ref _rightTrackTextureOffset, ref _rightCalculateRotation, ref _rightWheelsColliders, ref _rightWheelsTransforms, ref _rightTruckBones);
 
-        // обновление трансформов зависимых колес по референсу
-        UpdateReferenceTransform(_leftReferenceWheelTransform, ref _leftDependenceWheelsTransforms);
-        UpdateReferenceTransform(_rightReferenceWheelTransform, ref _rightDependenceWheelsTransforms);
+        // обновляем вращение колес левого борта
+        UpdateWheelsRotation(ref _leftCalculateRotation, ref _leftWheelsTransforms);
+        UpdateWheelsRotation(ref _leftCalculateRotation, ref _leftDependenceWheelsTransforms);
+        UpdateTruckTextureOffset(ref _leftTrackTextureOffset, ref _leftTankTruck);
+
+        // обновляем вращение колес правого борта
+        UpdateWheelsRotation(ref _rightCalculateRotation, ref _rightWheelsTransforms);
+        UpdateWheelsRotation(ref _rightCalculateRotation, ref _rightDependenceWheelsTransforms);
+        UpdateTruckTextureOffset(ref _rightTrackTextureOffset, ref _rightTankTruck);
     }
 
-    void UpdateTruckBonesTransforms()
-    {
-        Vector3 bonePosition = _testTruckBone.position;
-        bonePosition.x = (_leftWheelsTransforms[1].position.y - 0.35f);
-    }
+    // ----------------------------------------------- блок расчёта движения танка и обновления трансформов -------------------------
 
-    void DirectMoving()
-    {
-        
-        DirectDrive(ref _rightWheelsColliders);
-        DirectDrive(ref _leftWheelsColliders);
-
-        _forwardAcceleration = 0;
-        _rotateAcceleration = 0;
-    }
-
-    // базовая функция прямолинейного движения вперед и назад
-    void DirectDrive(ref WheelCollider[] collidersArray)
-    {
-        for (int i = 0; i < collidersArray.Length; i++)
-        {
-            WheelFrictionCurve frictionSet = collidersArray[i].sidewaysFriction;
-
-            if (Mathf.Abs(_forwardAcceleration) >= 0 && Mathf.Abs(_forwardAcceleration) <= _deltaVertical)
-            {
-                // если нет усилия акселерации, то тормозим
-                frictionSet.stiffness = 0.8f;
-                collidersArray[i].sidewaysFriction = frictionSet;
-                collidersArray[i].brakeTorque = _brakeForce;
-            }
-            else if (_currentSpeed > _directMoveVelocityLimit)
-            {
-                // если текущая скорость превышает максимальную, то тормозим
-                frictionSet.stiffness = 0.8f;
-                collidersArray[i].sidewaysFriction = frictionSet;
-                collidersArray[i].brakeTorque = _brakeForce;
-            }
-            else
-            {
-                frictionSet.stiffness = 0.06f;
-                collidersArray[i].sidewaysFriction = frictionSet;
-                collidersArray[i].brakeTorque = 0;
-                collidersArray[i].motorTorque = ((_forwardAcceleration + _rotateAcceleration) * _engineForce);
-            }
-        }
-    }
-
+    // основная функция вызова движения, определяет требуемый тип движения в зависимости от данных полученных по осям управления и текущей скорости юнита
     void CompletteDrive()
     {
         float totalLeftAcceleration = 0;
@@ -281,8 +310,8 @@ public class TankTruckMovingSystem : MonoBehaviour
         {
             breakPowerScaler = 1;
             // просто передаем нули и автоматом встаём на тормоз
-            SelectedSideMoving(ref _leftWheelsColliders, totalLeftAcceleration, breakPowerScaler, 0, _defaultSideFriction, MovingType.autobreak);
-            SelectedSideMoving(ref _rightWheelsColliders, totalRightAcceleration, breakPowerScaler, 0, _defaultSideFriction, MovingType.autobreak);
+            UpdateWheelColliders(ref _leftWheelsColliders, totalLeftAcceleration, breakPowerScaler, 0, _defaultSideFriction, MovingType.autobreak);
+            UpdateWheelColliders(ref _rightWheelsColliders, totalRightAcceleration, breakPowerScaler, 0, _defaultSideFriction, MovingType.autobreak);
         }
 
         // если передаётся вертикальное ускорение, но горизонтального нет - прямолинейное движение
@@ -293,9 +322,9 @@ public class TankTruckMovingSystem : MonoBehaviour
             breakPowerScaler = _breakPowerScaler;
 
             // передаём прямое ускорение полученное по оси, обычное ограничение скорости, коэффициент скольжения и тип движения
-            SelectedSideMoving(ref _leftWheelsColliders, totalLeftAcceleration, breakPowerScaler, _directMoveVelocityLimit, _directMoveSideFriction, MovingType.direct);
-            SelectedSideMoving(ref _rightWheelsColliders, totalRightAcceleration, breakPowerScaler, _directMoveVelocityLimit, _directMoveSideFriction, MovingType.direct);
-            
+            UpdateWheelColliders(ref _leftWheelsColliders, totalLeftAcceleration, breakPowerScaler, _directMoveVelocityLimit, _directMoveSideFriction, MovingType.direct);
+            UpdateWheelColliders(ref _rightWheelsColliders, totalRightAcceleration, breakPowerScaler, _directMoveVelocityLimit, _directMoveSideFriction, MovingType.direct);
+
         }
 
         // если передаётся горизонтальное ускорение, но вертикального нет - разворот на пятачке
@@ -305,16 +334,16 @@ public class TankTruckMovingSystem : MonoBehaviour
             totalRightAcceleration = -_rotateAcceleration;
             breakPowerScaler = _breakPowerScaler;
 
-            if (_currentSpeed > 0.1f)
+            if (_currentSpeed > 1f)
             {
                 // передаём прямое ускорение полученное по оси, обычное ограничение скорости, коэффициент скольжения и тип движения
-                SelectedSideMoving(ref _leftWheelsColliders, totalLeftAcceleration, breakPowerScaler, _rotateOnStandVelocityLimit, _completeMoveSideFriction, MovingType.on_stand);
-                SelectedSideMoving(ref _rightWheelsColliders, totalRightAcceleration, breakPowerScaler, _rotateOnStandVelocityLimit, _completeMoveSideFriction, MovingType.on_stand);
+                UpdateWheelColliders(ref _leftWheelsColliders, totalLeftAcceleration, breakPowerScaler, _rotateOnStandVelocityLimit, _completeMoveSideFriction, MovingType.on_stand);
+                UpdateWheelColliders(ref _rightWheelsColliders, totalRightAcceleration, breakPowerScaler, _rotateOnStandVelocityLimit, _completeMoveSideFriction, MovingType.on_stand);
             }
             else
             {
-                SelectedSideMoving(ref _leftWheelsColliders, totalLeftAcceleration, breakPowerScaler, _rotateOnStandVelocityLimit, _rotateOnStandSideFriction, MovingType.on_stand);
-                SelectedSideMoving(ref _rightWheelsColliders, totalRightAcceleration, breakPowerScaler, _rotateOnStandVelocityLimit, _rotateOnStandSideFriction, MovingType.on_stand);
+                UpdateWheelColliders(ref _leftWheelsColliders, totalLeftAcceleration, breakPowerScaler, _rotateOnStandVelocityLimit, _rotateOnStandSideFriction, MovingType.on_stand);
+                UpdateWheelColliders(ref _rightWheelsColliders, totalRightAcceleration, breakPowerScaler, _rotateOnStandVelocityLimit, _rotateOnStandSideFriction, MovingType.on_stand);
             }
         }
         else
@@ -351,147 +380,148 @@ public class TankTruckMovingSystem : MonoBehaviour
             breakPowerScaler = _breakPowerScaler;
 
             // передаём прямое ускорение полученное по оси, обычное ограничение скорости, коэффициент скольжения и тип движения
-            SelectedSideMoving(ref _leftWheelsColliders, totalLeftAcceleration, breakPowerScaler, _directMoveVelocityLimit, _completeMoveSideFriction, MovingType.complette);
-            SelectedSideMoving(ref _rightWheelsColliders, totalRightAcceleration, breakPowerScaler, _directMoveVelocityLimit, _completeMoveSideFriction, MovingType.complette);
+            UpdateWheelColliders(ref _leftWheelsColliders, totalLeftAcceleration, breakPowerScaler, _directMoveVelocityLimit, _completeMoveSideFriction, MovingType.complette);
+            UpdateWheelColliders(ref _rightWheelsColliders, totalRightAcceleration, breakPowerScaler, _directMoveVelocityLimit, _completeMoveSideFriction, MovingType.complette);
         }
 
     }
-
-    void SelectedSideMoving(ref WheelCollider[] collidersArray, float acceleration, float breakScaler, float maxVelocity, float frictionStiffnes, MovingType type)
+    // обновление параметров крутящего момента и торможения коллайдеров
+    void UpdateWheelColliders(ref WheelCollider[] collidersArray, float acceleration, float breakScaler, float maxVelocity, float frictionStiffnes, MovingType type)
     {
         for (int i = 0; i < collidersArray.Length; i++)
         {
             WheelFrictionCurve frictionSet = collidersArray[i].sidewaysFriction;
 
-            switch (type)
+            if (!collidersArray[i].GetGroundHit(out WheelHit hit))
             {
-                case MovingType.autobreak:
-                    frictionSet.stiffness = _defaultSideFriction;
-                    collidersArray[i].sidewaysFriction = frictionSet;
-                    collidersArray[i].motorTorque = (acceleration * _engineForce);
-                    collidersArray[i].brakeTorque = (breakScaler * _brakeForce);
-                    break;
-
-                case MovingType.complette:
-
-                case MovingType.direct:
-                    if (_currentSpeed > maxVelocity)
-                    {
-                        frictionSet.stiffness = _defaultSideFriction;
-                        collidersArray[i].sidewaysFriction = frictionSet;
-                        collidersArray[i].brakeTorque = _brakeForce;
-                    }
-                    else
-                    {
-                        frictionSet.stiffness = frictionStiffnes;
-                        collidersArray[i].sidewaysFriction = frictionSet;
-                        collidersArray[i].brakeTorque = (breakScaler * _brakeForce);
-                        collidersArray[i].motorTorque = (acceleration * _engineForce);
-                    }
-                    break;
-
-                case MovingType.on_stand:
-                    //if (Mathf.Abs(_angularSpeed.y) > maxVelocity)
-                    if (_angularSpeed > maxVelocity)
-                    {
-                        frictionSet.stiffness = _defaultSideFriction;
-                        collidersArray[i].sidewaysFriction = frictionSet;
-                        collidersArray[i].brakeTorque = _brakeForce;
-                    }
-                    else
-                    {
-                        frictionSet.stiffness = frictionStiffnes;
-                        collidersArray[i].sidewaysFriction = frictionSet;
-                        collidersArray[i].brakeTorque = (breakScaler * _brakeForce);
-                        collidersArray[i].motorTorque = (acceleration * _engineForce);
-                    }
-                    break;
+                frictionSet.stiffness = _defaultSideFriction;
+                collidersArray[i].sidewaysFriction = frictionSet;
+                collidersArray[i].motorTorque = 0;
+                collidersArray[i].brakeTorque = _brakeForce;
             }
-        }
-    }
 
-    void OnStandRotation()
-    {
-        for (int i = 0; i < _leftWheelsColliders.Length; i++)
-        {
-            WheelFrictionCurve frictionSet = _leftWheelsColliders[i].sidewaysFriction;
-
-            if (Mathf.Abs(_rotateAcceleration) >= 0 && Mathf.Abs(_rotateAcceleration) <= _deltaHorizontal)
-            {
-                frictionSet.stiffness = 0.8f;
-                _leftWheelsColliders[i].sidewaysFriction = frictionSet;
-                _leftWheelsColliders[i].brakeTorque = _brakeForce;
-            }
-            else if(_angularSpeed > _rotateOnStandVelocityLimit)
-            {
-                frictionSet.stiffness = 0.8f;
-                _leftWheelsColliders[i].sidewaysFriction = frictionSet;
-                _leftWheelsColliders[i].brakeTorque = _brakeForce;
-            }
             else
             {
-                frictionSet.stiffness = 0.06f;
-                _leftWheelsColliders[i].sidewaysFriction = frictionSet;
-                _leftWheelsColliders[i].brakeTorque = 0;
-                _leftWheelsColliders[i].motorTorque = (_rotateAcceleration * _engineForce);
-            }
-        }
+                switch (type)
+                {
+                    case MovingType.autobreak:
+                        frictionSet.stiffness = _defaultSideFriction;
+                        collidersArray[i].sidewaysFriction = frictionSet;
+                        collidersArray[i].motorTorque = (acceleration * _engineForce);
+                        collidersArray[i].brakeTorque = (breakScaler * _brakeForce);
+                        break;
 
-        for (int i = 0; i < _rightWheelsColliders.Length; i++)
-        {
-            WheelFrictionCurve frictionSet = _rightWheelsColliders[i].sidewaysFriction;
+                    case MovingType.complette:
+                        // проваливаемся вниз и работаем так же как и директ мув
+                    case MovingType.direct:
+                        if (_currentSpeed > maxVelocity)
+                        {
+                            frictionSet.stiffness = _defaultSideFriction;
+                            collidersArray[i].sidewaysFriction = frictionSet;
+                            collidersArray[i].brakeTorque = _brakeForce;
+                        }
+                        else
+                        {
+                            frictionSet.stiffness = frictionStiffnes;
+                            collidersArray[i].sidewaysFriction = frictionSet;
+                            collidersArray[i].brakeTorque = (breakScaler * _brakeForce);
+                            collidersArray[i].motorTorque = (acceleration * _engineForce);
+                        }
+                        break;
 
-            if (Mathf.Abs(_rotateAcceleration) >= 0 && Mathf.Abs(_rotateAcceleration) <= _deltaHorizontal)
-            {
-                frictionSet.stiffness = 0.8f;
-                _rightWheelsColliders[i].sidewaysFriction = frictionSet;
-                _rightWheelsColliders[i].brakeTorque = _brakeForce;
-            }
-            else if (_angularSpeed > _rotateOnStandVelocityLimit)
-            {
-                frictionSet.stiffness = 0.8f;
-                _rightWheelsColliders[i].sidewaysFriction = frictionSet;
-                _rightWheelsColliders[i].brakeTorque = _brakeForce;
-            }
-            else
-            {
-                frictionSet.stiffness = 0.06f;
-                _rightWheelsColliders[i].sidewaysFriction = frictionSet;
-                _rightWheelsColliders[i].brakeTorque = 0;
-                _rightWheelsColliders[i].motorTorque = (-_rotateAcceleration * _engineForce);
+                    case MovingType.on_stand:
+                        if (_angularSpeed > maxVelocity)
+                        {
+                            frictionSet.stiffness = _defaultSideFriction;
+                            collidersArray[i].sidewaysFriction = frictionSet;
+                            collidersArray[i].brakeTorque = _brakeForce;
+                        }
+                        else
+                        {
+                            frictionSet.stiffness = frictionStiffnes;
+                            collidersArray[i].sidewaysFriction = frictionSet;
+                            collidersArray[i].brakeTorque = (breakScaler * _brakeForce);
+                            collidersArray[i].motorTorque = (acceleration * _engineForce);
+                        }
+                        break;
+
+                    case MovingType.out_of_hit:
+                        frictionSet.stiffness = _defaultSideFriction;
+                        collidersArray[i].sidewaysFriction = frictionSet;
+                        collidersArray[i].motorTorque = 0;
+                        collidersArray[i].brakeTorque = _brakeForce;
+                        break;
+                }
             }
         }
     }
-
-    void UpdateWheelTransform(WheelCollider colider, Transform transform)
+    // комплексное обновление трансформов колес
+    void UpdateWheelTransform(ref float texture_offset, ref Quaternion rotation, ref WheelCollider[] coliders, ref Transform[] transforms, ref Transform[] bones)
     {
-        Vector3 position = transform.position;
-        Quaternion rotation = transform.rotation;
+        float CalculateRPM = 0;
+        float dev_rpm = 0.0f;
+        int dev_count = 0;
+        
+        // начинаем проход по всем колесам
+        for (int i = 0; i < transforms.Length; i++)
+        {
+            // получаем данные по текущей позиции и вращению коллайдера
+            Vector3 col_position = transforms[i].position;
+            Quaternion col_rotation = transforms[i].rotation;
+            coliders[i].GetWorldPose(out col_position, out col_rotation);
 
-        colider.GetWorldPose(out position, out rotation);
-        transform.position = position;
-        transform.rotation = rotation;
+            // если коллайдер колеса имеет касание с поверхностью, то он будет крутиться корреткно
+            if (coliders[i].GetGroundHit(out WheelHit hit) && coliders[i].rpm != 0)
+            {
+                dev_rpm += coliders[i].rpm;
+                dev_count++;
+            }
+
+            // оброаботка возвышения соответствующего меша колеса
+            UpdateWheelPosition(ref col_position, 0.03f, ref transforms[i]);
+
+            // обработка возвышения соответсвующей кости гусеницы
+            UpdateTrackBonePosition(ref col_position, coliders[i].radius, ref bones[i]);
+        }
+
+        if (dev_count != 0)
+        {
+            // если есть хоть одно колесо имеющее касание с поверхностью
+            CalculateRPM = dev_rpm / dev_count;   // высчитываем среднюю скорость вращения
+        }
+
+        rotation = Quaternion.Euler((CalculateRPM / 10), 0, 0) * rotation;
+        texture_offset = texture_offset + (CalculateRPM / 3600);
     }
-
-    void UpdateWheelTransform(ref WheelCollider[] coliders, ref Transform[] transforms)
+    // обновление позиции колеса
+    void UpdateWheelPosition(ref Vector3 col_position, float track_hight, ref Transform wheel_transform)
+    {
+        Vector3 wheel_position = wheel_transform.position;
+        // берем возвышение от колайдера и прибавляем высоту полотна гусеницы
+        wheel_position.y = col_position.y + track_hight;
+        // перезаписываем данные
+        wheel_transform.position = wheel_position;
+    }
+    // обновление поцизии кости гусеницы
+    void UpdateTrackBonePosition(ref Vector3 col_position, float col_radius, ref Transform bone_transform)
+    {
+        Vector3 bone_position = bone_transform.position;
+        // берем возвышение от коллайдера, вычитаем радиус диска и высоту подвески
+        bone_position.y = (col_position.y - col_radius);
+        // перезаписываем данные
+        bone_transform.position = bone_position;
+    } 
+    // обновление вращения колес
+    void UpdateWheelsRotation(ref Quaternion rotation, ref Transform[] transforms)
     {
         for (int i = 0; i < transforms.Length; i++)
         {
-            Vector3 position = transforms[i].position;
-            Quaternion rotation = transforms[i].rotation;
-
-            coliders[i].GetWorldPose(out position, out rotation);
-            transforms[i].position = (position + new Vector3(0, _suspentionDistance, 0));
-            transforms[i].rotation = rotation;
+            transforms[i].localRotation = rotation;
         }
     }
-
-    void UpdateReferenceTransform(Transform reference, ref Transform[] transforms)
+    // обвновлеие положения текстуры гусеницы
+    void UpdateTruckTextureOffset(ref float offset, ref GameObject track)
     {
-        for (int i = 0; i < transforms.Length; i++)
-        {
-            Quaternion rotation = reference.rotation;
-            transforms[i].rotation = rotation;
-        }
+        track.GetComponent<SkinnedMeshRenderer>().material.SetTextureOffset("_MainTex", new Vector2(0, offset));
     }
 }

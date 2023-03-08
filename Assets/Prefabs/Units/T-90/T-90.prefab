@@ -2844,11 +2844,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _Enable: 1
+  _autoPilotMode: 0
   _targetObject: {fileID: 0}
   _targetMarkerOne: {fileID: 7200002245738692146}
   _targetMarkerTwo: {fileID: 1595855603173918630}
   _targetType: 1
-  _autoPilotMode: 0
   _pathMode: 0
   _navSysSelectDelta: 2
   _breakingPointDistance: 20

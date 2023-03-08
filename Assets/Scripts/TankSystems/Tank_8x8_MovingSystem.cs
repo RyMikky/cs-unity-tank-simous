@@ -115,8 +115,8 @@ public class Tank_8x8_MovingSystem : MonoBehaviour
     void NawMeshAgentPositionUpdater()
     {
         //_Tank.GetComponent<NavMeshAgent>().velocity = _Panzer.GetComponent<Rigidbody>().velocity;
-        _Tank.GetComponent<NavMeshAgent>().updatePosition = false;
-        _Tank.GetComponent<NavMeshAgent>().nextPosition = _Panzer.transform.position;
+        //_Tank.GetComponent<NavMeshAgent>().updatePosition = false;
+        //_Tank.GetComponent<NavMeshAgent>().nextPosition = _Panzer.transform.position;
     }
 
     //void Stop()
